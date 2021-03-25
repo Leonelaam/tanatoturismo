@@ -10,7 +10,7 @@ class User(db.Model):
     password = db.Column(db.String(255), unique=False, nullable=False)
     is_active = db.Column(db.Boolean(), unique=False, nullable=False)
     favorite_place= db.relationship("Favorite_Place", backref="user", cascade="all, delete")
-    scores = db.relationship("Scores")
+    scores = db.relationship("Scores", backref="user")
 
     def __repr__(self):
         return '<User %r, %r, %r>' % (self.id, self.nickname, self.email)
@@ -21,7 +21,11 @@ class User(db.Model):
             "email": self.email,
             "nickname" : self.nickname,
             "is_active" : self.is_active,
-        } 
+            "favorite_place" : list(map(lambda fav_place: fav_place.serialize(),self.favorite_place))
+        }
+    
+    def serialize2(self):
+        return list(map(lambda fav_place: fav_place.serialize(),self.favorite_place))
 
 class Place(db.Model):
     __tablename__ = "place"
@@ -42,6 +46,14 @@ class Place(db.Model):
             "img": self.img,
             "name_place": self.name_place,
             "description": self.description,
+            "location": self.location,
+            "scores": list(map(lambda score:score.serialize(),self.scores))
+        }
+    def serializeimg(self):
+        return {
+            "id": self.id,
+            "name_place": self.name_place,
+            "img": self.img,
             "location": self.location
         }
    
@@ -57,9 +69,9 @@ class Favorite_Place(db.Model):
     def serialize(self):
         return {       
             "id": self.id,
-            "name_place": self.user_id,
             "user_id": self.user_id,
-            "place_id" : self.place_id
+            "place_id" : self.place_id,
+            "place_name" : self.place.name_place
         } 
 
 class Scores(db.Model):
@@ -78,5 +90,11 @@ class Scores(db.Model):
             "id": self.id,
             "user_id": self.user_id,
             "place_id" : self.place_id,
-            "score": self.score
+            "score": self.score,
+            "user": self.user.nickname,
+            "review_comments": self.review_comments
         } 
+    
+    def serialize2(self):
+        return self.score
+       

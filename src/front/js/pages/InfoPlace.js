@@ -1,41 +1,43 @@
-import React, { useState, useEffect, useContext } from "react";
-import { Link } from "react-router-dom";
+import React, { useContext, useEffect } from "react";
+import { useParams } from "react-router-dom";
 
+//Componentes
 import { Context } from "../store/appContext";
+import { Comments } from "../component/place/Comments";
+import { FormComments } from "../component/place/FormComments";
+import { Carrusel } from "../component/place/Carrusel";
+import { DescripPlace } from "../component/place/DescripPlace";
+import { Map } from "../component/place/Map";
 
 export const InfoPlace = () => {
 	const { store, actions } = useContext(Context);
-
+	let placeId = useParams();
+	useEffect(
+		() => {
+			actions.fetchPlacesbyId(placeId.id);
+		},
+		[placeId.id]
+	);
 	return (
-		<div className="container">
-			<ul className="list-group">
-				{store.demo.map((item, index) => {
-					return (
-						<li
-							key={index}
-							className="list-group-item d-flex justify-content-between"
-							style={{ background: item.background }}>
-							<Link to={"/single/" + index}>
-								<span>Link to: {item.title}</span>
-							</Link>
-							{// Conditional render example
-							// Check to see if the background is orange, if so, display the message
-							item.background === "orange" ? (
-								<p style={{ color: item.initial }}>
-									Check store/flux.js scroll to the actions to see the code
-								</p>
-							) : null}
-							<button className="btn btn-success" onClick={() => actions.changeColor(index, "orange")}>
-								Change Color
-							</button>
-						</li>
-					);
-				})}
-			</ul>
-			<br />
-			<Link to="/">
-				<button className="btn btn-primary">Back home</button>
-			</Link>
+		<div className="container-fluid px-0">
+			<Carrusel />
+			<div className="container" />
+			<DescripPlace />
+			<Map placeId={placeId.id} />
+			<div className="container">
+				{!!store.currentplace &&
+					store.currentplace.scores.map(elem => {
+						return (
+							<Comments
+								key={elem.id}
+								review_comments={elem.review_comments}
+								score={elem.score}
+								user={elem.user}
+							/>
+						);
+					})}
+				<FormComments />
+			</div>
 		</div>
 	);
 };

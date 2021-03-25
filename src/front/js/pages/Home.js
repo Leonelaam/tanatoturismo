@@ -1,15 +1,23 @@
 import React, { useContext } from "react";
 import { Context } from "../store/appContext";
+import { Destacados } from "../component/home/Destacados";
+import { Jumbotron } from "../component/home/Jumbotron";
+import { DescripHome } from "../component/home/DescripHome";
+import { ComingSoon } from "../component/home/ComingSoon";
 
 export const Home = () => {
 	const { store, actions } = useContext(Context);
 
 	return (
-		<div className="container-fluid">
-			<h1>JUMBOTRON</h1>
-			<h1>DESCRIPCION TANATOTURISMO</h1>
-			<h1>LUGARES DESTACADOS</h1>
-			<h1>GRID IMAGS</h1>
+		<div className="container-fluid px-0">
+			<Jumbotron />
+			<div className="fondoDestacados">
+				<Destacados />
+			</div>
+			<DescripHome />
+			<div className="container-fluid fondoCoomingSoon">
+				<ComingSoon />
+			</div>
 		</div>
 	);
 };
